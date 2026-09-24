@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Exponents and Logarithms | Math 30-1 Practice</title>
+    <meta name="description" content="Interactive Math 30-1 practice for exponents and logarithms.">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23182b50'/%3E%3Ctext x='6' y='24' font-size='25' fill='white'%3Eπ%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+      [hidden] { display: none !important; }
+      .question-text { white-space: normal; }
+      .question-text svg { overflow: hidden; }
+      .unit-shell { display: grid; gap: 22px; }
+      .unit-controls { display: grid; grid-template-columns: 1fr 1.35fr .7fr; gap: 14px; width: 100%; }
+      .unit-controls > div { min-width: 0; }
+      .unit-controls select { width: 100%; }
+      .outcome-box { background: #fff; border: 1px solid #d6dfec; border-radius: 10px; padding: 16px 18px; }
+      .outcome-box strong { color: #17294b; }
+      .answer-area { margin-top: 20px; }
+      math-field,
+      #answer-fallback {
+        width: 100%;
+        min-height: 58px;
+        border: 1px solid #a5b5ce;
+        border-radius: 8px;
+        background: #fff;
+        color: #17294b;
+        padding: 10px 12px;
+        font-size: 1.25rem;
+      }
+      math-field:focus-within,
+      #answer-fallback:focus { outline: 3px solid #cc7700; outline-offset: 3px; }
+      #answer-fallback { font: 1rem/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .choice-list { display: grid; gap: 10px; margin: 18px 0; }
+      .choice-option { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border: 1px solid #cbd6e5; border-radius: 8px; background: #fff; cursor: pointer; }
+      .choice-option:hover { border-color: #2357ba; }
+      .choice-option input { margin-top: 6px; }
+      .feedback { margin-top: 14px; border-radius: 8px; padding: 12px 14px; font-weight: 650; display: none; }
+      .feedback.good { display: block; background: #edf6f4; color: #0e5a4f; border-left: 4px solid #167367; }
+      .feedback.bad { display: block; background: #fff2ef; color: #7a2a1f; border-left: 4px solid #b74b3c; }
+      .hint-box { display: none; margin-top: 14px; background: #fff7e8; border-left: 4px solid #bd7900; padding: 12px 14px; color: #674507; }
+      .solution-box { display: none; margin-top: 14px; background: #edf6f4; border-left: 4px solid #167367; padding: 14px 18px; }
+      .question-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+      .quiz-status { display: none; justify-content: space-between; gap: 16px; flex-wrap: wrap; background: #eef3fb; border: 1px solid #d6dfec; border-radius: 9px; padding: 12px 16px; font-weight: 650; }
+      .quiz-status.active { display: flex; }
+      .source-note { font-size: .9rem; color: #53637a; margin-top: 10px; }
+      .answer-label { font-weight: 650; margin-bottom: 7px; }
+      .kbd-note { color: #53637a; font-size: .875rem; margin-top: 6px; }
+      #math-status { margin-bottom: 0; }
+      @media(max-width: 800px) {
+        .unit-controls { grid-template-columns: 1fr; }
+      }
+      @media print {
+        .question-actions, .answer-area, .choice-list, .quiz-status, .outcome-box, .mode-switch { display: none !important; }
+      }
+    </style>
+
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [['\\(', '\\)']],
+          displayMath: [['\\[', '\\]']],
+          processEscapes: true
+        },
+        svg: { fontCache: 'global' }
+      };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-svg.js" onerror="window.mathLoadFailed=true"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathlive@0.101.1/dist/mathlive.min.js"></script>
+    <script defer src="unit-2.js"></script>
+  </head>
+
+  <body data-page="unit">
+    <header>
+      <a class="brand" href="index.html">
+        <span class="mark">π</span>
+        Math Practice
+      </a>
+      <span class="header-note">Math 30-1</span>
+    </header>
+
+    <main id="main" class="unit-shell">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="index.html">Courses</a>
+        <span>/</span>
+        <a href="math-30-1.html">Math 30-1</a>
+        <span>/ Exponents and Logarithms</span>
+      </nav>
+
+      <section>
+        <div class="eyebrow">Math 30-1 · Relations and Functions</div>
+        <h1>Exponents and Logarithms</h1>
+        <p class="intro muted">Choose a curriculum outcome and a specific skill, then generate fresh practice questions. The quiz samples two skills from each core strand; extended exam challenges are available under Enrichment.</p>
+      </section>
+
+      <p id="math-status" class="notice" hidden>
+        Math rendering could not load. Reload the page with an internet connection so the equations display correctly.
+      </p>
+
+      <div class="mode-switch" role="group" aria-label="Practice mode">
+        <button id="practice-mode" type="button">Skill practice</button>
+        <button id="quiz-mode" type="button" class="secondary">10-question quiz</button>
+      </div>
+
+      <section id="practice-panel">
+        <div class="toolbar">
+          <div class="unit-controls">
+            <div>
+              <label for="outcome-select">Curriculum strand</label>
+              <select id="outcome-select"></select>
+            </div>
+            <div>
+              <label for="skill-select">Skill</label>
+              <select id="skill-select"></select>
+            </div>
+            <div>
+              <label for="difficulty-select">Difficulty</label>
+              <select id="difficulty-select">
+                <option value="standard">Standard</option>
+                <option value="exam" selected>Exam-style</option>
+                <option value="challenge">Challenge</option>
+              </select>
+            </div>
+          </div>
+          <div class="actions">
+            <button id="generate-btn" type="button">Generate question</button>
+          </div>
+        </div>
+
+        <div id="outcome-summary" class="outcome-box" aria-live="polite"></div>
+      </section>
+
+      <section id="quiz-status" class="quiz-status" aria-live="polite">
+        <span id="quiz-progress">Question 1 of 10</span>
+        <span id="quiz-score">Score: 0</span>
+      </section>
+
+      <article id="question-card" class="question" aria-live="polite">
+        <div class="question-head">
+          <span id="question-outcome">RF</span>
+          <span id="question-difficulty">Exam-style</span>
+        </div>
+
+        <div id="question-text" class="question-text"></div>
+
+        <div id="choice-list" class="choice-list" hidden></div>
+
+        <div id="answer-area" class="answer-area">
+          <div class="answer-label">Your answer</div>
+          <math-field id="answer-field" virtual-keyboard-mode="manual" aria-label="Mathematical answer"></math-field>
+          <input id="answer-fallback" type="text" aria-label="LaTeX answer fallback" placeholder="Enter a number or LaTeX expression" hidden>
+          <div class="kbd-note">You can type normal numbers or LaTeX such as <span class="math">\frac{3}{2}</span> or <span class="math">4+\sqrt{19}</span>. Use log(3)/log(2) for a base-2 logarithm. Separate multiple answers with semicolons.</div>
+        </div>
+
+        <div class="question-actions">
+          <button id="submit-btn" type="button">Check answer</button>
+          <button id="hint-btn" type="button" class="secondary">Hint</button>
+          <button id="solution-btn" type="button" class="secondary">Show solution</button>
+          <button id="next-btn" type="button" class="secondary" hidden>Next question</button>
+        </div>
+
+        <div id="feedback" class="feedback" role="status"></div>
+        <div id="hint-box" class="hint-box"></div>
+        <div id="solution-box" class="solution-box"></div>
+      </article>
+    </main>
+
+    <footer>School mathematics · Work at your own pace.</footer>
+  </body>
+</html>
