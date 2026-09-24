@@ -246,7 +246,7 @@
   const state = {
     mode: 'practice',
     currentQuestion: null,
-    practiceLocked: false,
+    practiceQuestions: [],
     quiz: null,
     mathLiveReady: false
   };
@@ -262,19 +262,18 @@
   function init() {
     cacheElements();
     populateOutcomeSelect();
-    populateSkillSelect();
     updateOutcomeSummary();
     bindEvents();
     setupMathInputFallback();
-    generatePracticeQuestion();
+    generatePracticeSet();
   }
 
   function cacheElements() {
     [
-      'practice-mode', 'quiz-mode', 'practice-panel', 'outcome-select', 'skill-select', 'difficulty-select',
+      'practice-mode', 'quiz-mode', 'practice-panel', 'practice-set', 'outcome-select',
       'generate-btn', 'outcome-summary', 'quiz-status', 'quiz-progress', 'quiz-score', 'question-card',
       'question-outcome', 'question-difficulty', 'question-text', 'choice-list', 'answer-area', 'answer-field',
-      'answer-fallback', 'submit-btn', 'hint-btn', 'solution-btn', 'next-btn', 'feedback', 'hint-box', 'solution-box'
+      'answer-fallback', 'answer-preview', 'submit-btn', 'hint-btn', 'solution-btn', 'next-btn', 'feedback', 'hint-box', 'solution-box'
     ].forEach(id => {
       els[toCamel(id)] = document.getElementById(id);
     });
@@ -282,56 +281,87 @@
 
   function bindEvents() {
     els.outcomeSelect.addEventListener('change', () => {
-      populateSkillSelect();
       updateOutcomeSummary();
-      generatePracticeQuestion();
+      generatePracticeSet();
     });
-    els.skillSelect.addEventListener('change', generatePracticeQuestion);
-    els.difficultySelect.addEventListener('change', generatePracticeQuestion);
-    els.generateBtn.addEventListener('click', generatePracticeQuestion);
+    els.generateBtn.addEventListener('click', generatePracticeSet);
     els.practiceMode.addEventListener('click', enterPracticeMode);
     els.quizMode.addEventListener('click', startQuiz);
+    els.practiceSet.addEventListener('click', handlePracticeAction);
+    els.practiceSet.addEventListener('input', handlePracticeInput);
     els.submitBtn.addEventListener('click', submitAnswer);
     els.hintBtn.addEventListener('click', showHint);
     els.solutionBtn.addEventListener('click', showSolution);
     els.nextBtn.addEventListener('click', nextQuestion);
+    els.answerFallback.addEventListener('input', () => renderLatexPreview(els.answerFallback.value, els.answerPreview));
   }
 
   function setupMathInputFallback() {
-    const enableMathField = () => {
-      state.mathLiveReady = Boolean(customElements.get('math-field'));
-      els.answerField.hidden = !state.mathLiveReady;
-      els.answerFallback.hidden = state.mathLiveReady;
-      if (state.mathLiveReady) {
-        els.answerField.setAttribute('smart-mode', 'true');
-        els.answerField.setAttribute('math-virtual-keyboard-policy', 'manual');
-      }
-    };
+    // Students type LaTeX with the physical keyboard while MathJax renders a live preview beside it.
+    // MathLive is no longer required for answer entry.
+    state.mathLiveReady = false;
+    if (els.answerField) els.answerField.hidden = true;
+    els.answerFallback.hidden = false;
+    syncPracticeMathInputs();
+  }
 
-    enableMathField();
-    setTimeout(enableMathField, 1600);
-    customElements.whenDefined('math-field').then(enableMathField);
+  function configureMathField() {}
+
+  function syncPracticeMathInputs() {
+    if (!els.practiceSet) return;
+    els.practiceSet.querySelectorAll('.practice-answer-field').forEach(field => { field.hidden = true; });
+    els.practiceSet.querySelectorAll('.answer-fallback').forEach(input => { input.hidden = false; });
+  }
+
+  function renderLatexPreview(raw, preview) {
+    const value = String(raw || '').trim();
+    if (!preview) return;
+
+    if (preview._previewTimer) clearTimeout(preview._previewTimer);
+    clearTypeset([preview]);
+    preview.classList.toggle('empty', !value);
+
+    if (!value) {
+      preview.textContent = 'Your typeset answer will appear here.';
+      return;
+    }
+
+    // textContent keeps student input inert; MathJax typesets only the TeX delimiters.
+    preview.textContent = `\\[${value}\\]`;
+    preview._previewTimer = setTimeout(() => {
+      if (window.mathLoadFailed) return;
+      if (window.MathJax?.typesetPromise) {
+        window.MathJax.typesetPromise([preview]).catch(() => {
+          preview.textContent = value;
+          preview.classList.add('empty');
+        });
+      }
+    }, 90);
   }
 
   function enterPracticeMode() {
     state.mode = 'practice';
     state.quiz = null;
     els.practicePanel.hidden = false;
+    els.practiceSet.hidden = false;
+    els.questionCard.hidden = true;
     els.quizStatus.classList.remove('active');
     els.practiceMode.classList.remove('secondary');
     els.quizMode.classList.add('secondary');
-    generatePracticeQuestion();
+    generatePracticeSet();
   }
 
   function startQuiz() {
     state.mode = 'quiz';
     els.practicePanel.hidden = true;
+    els.practiceSet.hidden = true;
+    els.questionCard.hidden = false;
     els.quizStatus.classList.add('active');
     els.quizMode.classList.remove('secondary');
     els.practiceMode.classList.add('secondary');
 
     const questions = shuffled(OUTCOMES.filter(o => o.id !== 'EXT').flatMap(outcome =>
-      shuffled(outcome.skills).slice(0, 2).map(skill => skill.generator(Math.random() < .25 ? 'challenge' : 'exam'))
+      shuffled(outcome.skills).slice(0, 2).map(skill => skill.generator('challenge'))
     ));
 
     state.quiz = {
@@ -354,31 +384,186 @@
     });
   }
 
-  function populateSkillSelect() {
-    const outcome = getSelectedOutcome();
-    els.skillSelect.innerHTML = '';
-    outcome.skills.forEach(skill => {
-      const option = document.createElement('option');
-      option.value = skill.id;
-      option.textContent = skill.label;
-      els.skillSelect.appendChild(option);
-    });
-  }
-
   function updateOutcomeSummary() {
     const outcome = getSelectedOutcome();
     clearTypeset([els.outcomeSummary]);
-    els.outcomeSummary.innerHTML = `<strong>${escapeHtml(outcome.title)}</strong><br>${escapeHtml(outcome.summary)}`;
+    const count = outcome.skills.length;
+    const levelNote = outcome.id === 'EXT' ? 'Extra-hard enrichment' : 'Hard practice';
+    els.outcomeSummary.innerHTML = `<strong>${escapeHtml(outcome.title)}</strong><br>${escapeHtml(outcome.summary)}<br><span>${count} question type${count === 1 ? '' : 's'} — ${levelNote}. A new set generates one question from each type.</span>`;
   }
 
-  function generatePracticeQuestion() {
+  function generatePracticeSet() {
     if (state.mode !== 'practice') return;
-    const skill = findSkill(els.skillSelect.value);
-    if (!skill) return;
-    const difficulty = els.difficultySelect.value;
-    state.currentQuestion = skill.generator(difficulty);
-    state.practiceLocked = false;
-    renderQuestion(state.currentQuestion);
+    const outcome = getSelectedOutcome();
+    const difficulty = 'challenge';
+    state.practiceQuestions = outcome.skills.map((skill, index) => ({
+      id: `${outcome.id}-${skill.id}-${Date.now()}-${index}`,
+      skillId: skill.id,
+      locked: false,
+      question: skill.generator(difficulty)
+    }));
+    renderPracticeSet();
+  }
+
+  function renderPracticeSet() {
+    clearTypeset([els.practiceSet]);
+    els.practiceSet.innerHTML = '';
+
+    state.practiceQuestions.forEach((item, index) => {
+      const question = item.question;
+      const card = document.createElement('article');
+      card.className = 'question';
+      card.dataset.practiceIndex = String(index);
+      card.innerHTML = `
+        <div class="question-head">
+          <span>${escapeHtml(question.outcomeId)} · ${escapeHtml(question.skillLabel)} · ${index + 1}/${state.practiceQuestions.length}</span>
+          <span>${escapeHtml(difficultyLabel(question.difficulty, question.outcomeId))}</span>
+        </div>
+        <div class="question-text">${question.promptHtml}</div>
+        <div class="choice-list" ${question.type === 'choice' ? '' : 'hidden'}></div>
+        <div class="answer-area" ${question.type === 'choice' ? 'hidden' : ''}>
+          <div class="answer-label">Your answer</div>
+          <div class="answer-live-grid">
+            <div class="answer-pane">
+              <div class="answer-pane-label">Type LaTeX</div>
+              <input class="answer-fallback" type="text" aria-label="Type your answer in LaTeX" placeholder="Type your answer, e.g. &#92;frac{3}{2}">
+            </div>
+            <div class="answer-pane">
+              <div class="answer-pane-label">Live preview</div>
+              <div class="answer-preview empty" aria-live="polite">Your typeset answer will appear here.</div>
+            </div>
+          </div>
+          <div class="kbd-note">Type with your regular keyboard. The preview updates automatically. You can use LaTeX such as <code>&#92;frac{3}{2}</code>, <code>4+&#92;sqrt{19}</code>, or <code>&#92;frac{&#92;log 3}{&#92;log 2}</code>. Separate multiple answers with semicolons.</div>
+        </div>
+        <div class="question-actions">
+          <button type="button" data-action="check">Check answer</button>
+          <button type="button" class="secondary" data-action="hint">Hint</button>
+          <button type="button" class="secondary" data-action="solution">Show solution</button>
+        </div>
+        <div class="feedback" role="status"></div>
+        <div class="hint-box"></div>
+        <div class="solution-box"></div>`;
+
+      if (question.type === 'choice') renderPracticeChoices(card, question, index);
+      els.practiceSet.appendChild(card);
+    });
+
+    syncPracticeMathInputs();
+    queueTypeset();
+  }
+
+  function renderPracticeChoices(card, question, questionIndex) {
+    const list = card.querySelector('.choice-list');
+    question.options.forEach((option, optionIndex) => {
+      const label = document.createElement('label');
+      label.className = 'choice-option';
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.name = `practice-choice-${questionIndex}`;
+      input.value = String(optionIndex);
+      const text = document.createElement('span');
+      text.innerHTML = `<strong>${String.fromCharCode(65 + optionIndex)}.</strong> ${math(option.latex)}`;
+      label.append(input, text);
+      list.appendChild(label);
+    });
+  }
+
+  function handlePracticeInput(event) {
+    const input = event.target.closest('.answer-fallback');
+    if (!input) return;
+    const card = input.closest('[data-practice-index]');
+    if (!card) return;
+    renderLatexPreview(input.value, card.querySelector('.answer-preview'));
+  }
+
+  function handlePracticeAction(event) {
+    const button = event.target.closest('button[data-action]');
+    if (!button) return;
+    const card = button.closest('[data-practice-index]');
+    if (!card) return;
+    const index = Number(card.dataset.practiceIndex);
+    const item = state.practiceQuestions[index];
+    if (!item) return;
+
+    const action = button.dataset.action;
+    if (action === 'check') checkPracticeAnswer(item, card);
+    if (action === 'hint') showPracticeHint(item.question, card);
+    if (action === 'solution') showPracticeSolution(item.question, card);
+  }
+
+  function checkPracticeAnswer(item, card) {
+    if (item.locked) return;
+    const result = checkAnswerInCard(item.question, card);
+    const feedback = card.querySelector('.feedback');
+    if (result.empty) {
+      setCardFeedback(feedback, 'bad', 'Enter an answer before checking it.');
+      return;
+    }
+    if (result.correct) {
+      item.locked = true;
+      setCardFeedback(feedback, 'good', 'Correct.');
+      lockPracticeCard(card);
+    } else {
+      setCardFeedback(feedback, 'bad', result.message || 'Not quite. Try again or use the hint.');
+    }
+  }
+
+  function checkAnswerInCard(question, card) {
+    if (question.type === 'choice') {
+      const selected = card.querySelector('.choice-list input:checked');
+      if (!selected) return { empty: true, correct: false };
+      return { empty: false, correct: Number(selected.value) === question.correctIndex };
+    }
+
+    const fallback = card.querySelector('.answer-fallback');
+    const raw = String(fallback?.value || '');
+    if (!raw.trim()) return { empty: true, correct: false };
+
+    if (question.type === 'set' || question.type === 'tuple') {
+      const entries = raw.replace(/\\left|\\right/g, '').replace(/^\s*\\?\{|\\?\}\s*$/g, '').split(/[;,]/).map(parseNumericLatex);
+      if (entries.some(v => !Number.isFinite(v))) return { correct: false, message: 'Separate answers with semicolons. Use log(3)/log(2) for a base-2 logarithm.' };
+      const tol = question.tolerance ?? 1e-7;
+      const unique = question.type === 'set' ? entries.filter((v, i) => entries.findIndex(w => Math.abs(w - v) <= tol) === i) : entries;
+      const expected = question.answers;
+      const correct = unique.length === expected.length && (question.type === 'tuple'
+        ? expected.every((v, i) => Math.abs(v - unique[i]) <= tol)
+        : expected.every(v => unique.some(w => Math.abs(v - w) <= tol)));
+      return { correct, message: question.type === 'set' ? 'Check that you included every valid root and rejected roots outside the original domain.' : 'Check both values and their order.' };
+    }
+
+    const value = parseNumericLatex(raw);
+    if (!Number.isFinite(value)) {
+      return { empty: false, correct: false, message: 'I could not read that as a number. Try a decimal, fraction, or simple radical.' };
+    }
+    const tolerance = question.tolerance ?? 1e-7;
+    return { empty: false, correct: Math.abs(value - question.answer) <= tolerance };
+  }
+
+  function showPracticeHint(question, card) {
+    const box = card.querySelector('.hint-box');
+    box.innerHTML = question.hintHtml;
+    box.style.display = 'block';
+    queueTypeset();
+  }
+
+  function showPracticeSolution(question, card) {
+    const box = card.querySelector('.solution-box');
+    box.innerHTML = `<strong>Worked solution</strong><div class="steps">${question.solutionHtml}</div>`;
+    box.style.display = 'block';
+    queueTypeset();
+  }
+
+  function setCardFeedback(element, kind, message) {
+    element.className = `feedback ${kind}`;
+    element.textContent = message;
+  }
+
+  function lockPracticeCard(card) {
+    card.querySelectorAll('.choice-list input').forEach(input => { input.disabled = true; });
+    const fallback = card.querySelector('.answer-fallback');
+    if (fallback) fallback.disabled = true;
+    const check = card.querySelector('button[data-action="check"]');
+    if (check) check.disabled = true;
   }
 
   function renderQuizQuestion() {
@@ -427,9 +612,9 @@
     els.nextBtn.textContent = 'Next question';
     els.submitBtn.hidden = false;
     els.hintBtn.hidden = false;
-    els.solutionBtn.hidden = state.mode === 'quiz';
+    els.solutionBtn.hidden = true;
     els.questionOutcome.textContent = `${question.outcomeId} · ${question.skillLabel}`;
-    els.questionDifficulty.textContent = difficultyLabel(question.difficulty);
+    els.questionDifficulty.textContent = difficultyLabel(question.difficulty, question.outcomeId);
     els.questionText.innerHTML = question.promptHtml;
 
     resetAnswerInput();
@@ -465,10 +650,8 @@
 
   function submitAnswer() {
     const question = state.currentQuestion;
-    if (!question) return;
-
-    if (state.mode === 'quiz' && state.quiz?.answered) return;
-    if (state.mode === 'practice' && state.practiceLocked) return;
+    if (!question || state.mode !== 'quiz') return;
+    if (state.quiz?.answered) return;
 
     const result = checkAnswer(question);
     if (result.empty) {
@@ -476,25 +659,13 @@
       return;
     }
 
-    if (state.mode === 'quiz') {
-      state.quiz.answered = true;
-      if (result.correct) state.quiz.score += 1;
-      setFeedback(result.correct ? 'good' : 'bad', result.correct ? 'Correct.' : 'Not correct. Review your work, then continue.');
-      lockAnswerControls();
-      els.solutionBtn.hidden = false;
-      els.nextBtn.hidden = false;
-      els.quizScore.textContent = `Score: ${state.quiz.score}`;
-      return;
-    }
-
-    if (result.correct) {
-      state.practiceLocked = true;
-      setFeedback('good', 'Correct.');
-      lockAnswerControls();
-      els.nextBtn.hidden = false;
-    } else {
-      setFeedback('bad', result.message || 'Not quite. Try again or use the hint.');
-    }
+    state.quiz.answered = true;
+    if (result.correct) state.quiz.score += 1;
+    setFeedback(result.correct ? 'good' : 'bad', result.correct ? 'Correct.' : 'Not correct. Review your work, then continue.');
+    lockAnswerControls();
+    els.solutionBtn.hidden = false;
+    els.nextBtn.hidden = false;
+    els.quizScore.textContent = `Score: ${state.quiz.score}`;
   }
 
   function checkAnswer(question) {
@@ -526,7 +697,7 @@
 
   function showHint() {
     const question = state.currentQuestion;
-    if (!question) return;
+    if (!question || state.mode !== 'quiz') return;
     els.hintBox.innerHTML = question.hintHtml;
     els.hintBox.style.display = 'block';
     queueTypeset();
@@ -534,45 +705,37 @@
 
   function showSolution() {
     const question = state.currentQuestion;
-    if (!question) return;
+    if (!question || state.mode !== 'quiz') return;
     els.solutionBox.innerHTML = `<strong>Worked solution</strong><div class="steps">${question.solutionHtml}</div>`;
     els.solutionBox.style.display = 'block';
     queueTypeset();
   }
 
   function nextQuestion() {
-    if (state.mode === 'quiz') {
-      if (state.quiz.index >= state.quiz.questions.length) {
-        startQuiz();
-        return;
-      }
-      state.quiz.index += 1;
-      renderQuizQuestion();
-    } else {
-      generatePracticeQuestion();
+    if (state.mode !== 'quiz') return;
+    if (state.quiz.index >= state.quiz.questions.length) {
+      startQuiz();
+      return;
     }
+    state.quiz.index += 1;
+    renderQuizQuestion();
   }
 
   function lockAnswerControls() {
     els.choiceList.querySelectorAll('input').forEach(input => { input.disabled = true; });
-    if (state.mathLiveReady) els.answerField.setAttribute('read-only', '');
     els.answerFallback.disabled = true;
     els.submitBtn.disabled = true;
   }
 
   function resetAnswerInput() {
     els.choiceList.querySelectorAll('input').forEach(input => { input.disabled = false; input.checked = false; });
-    if (state.mathLiveReady) {
-      els.answerField.removeAttribute('read-only');
-      els.answerField.value = '';
-    }
     els.answerFallback.disabled = false;
     els.answerFallback.value = '';
+    renderLatexPreview('', els.answerPreview);
     els.submitBtn.disabled = false;
   }
 
   function getMathInputValue() {
-    if (state.mathLiveReady && !els.answerField.hidden) return String(els.answerField.value || '');
     return String(els.answerFallback.value || '');
   }
 
@@ -1012,7 +1175,7 @@
       return;
     }
     if (window.MathJax?.typesetPromise) {
-      window.MathJax.typesetPromise([els.questionCard, els.outcomeSummary]).catch(() => {
+      window.MathJax.typesetPromise([els.practiceSet, els.questionCard, els.outcomeSummary].filter(Boolean)).catch(() => {
         const status = document.getElementById('math-status');
         if (status) status.hidden = false;
       });
@@ -1054,8 +1217,10 @@
     }catch{return NaN;}
   }
 
-  function difficultyLabel(value) {
-    return ({ standard: 'Standard', exam: 'Exam-style', challenge: 'Challenge' })[value] || 'Exam-style';
+  function difficultyLabel(value, outcomeId = '') {
+    if (outcomeId === 'EXT') return 'Extra hard';
+    if (value === 'challenge') return 'Hard';
+    return ({ standard: 'Standard', exam: 'Exam-style' })[value] || 'Hard';
   }
 
   function shiftExpr(variable, amount) {
