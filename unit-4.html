@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Permutations, Combinations & Binomial Theorem | Math 30-1 Practice</title>
+    <meta name="description" content="Interactive Math 30-1 practice for permutations, combinations, counting principles, and the binomial theorem.">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23182b50'/%3E%3Ctext x='6' y='24' font-size='25' fill='white'%3Eπ%3C/text%3E%3C/svg%3E">
+    <!-- Visual styles are embedded so an older shared stylesheet cannot override this design. -->
+
+    <style>
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:#182b50;background:#f5f7fb;line-height:1.6;font-synthesis:none}*{box-sizing:border-box}body{margin:0}a{color:inherit}button{font:inherit}a,button{-webkit-tap-highlight-color:transparent}a:focus-visible,button:focus-visible{outline:3px solid #c47b12;outline-offset:5px}.skip{position:absolute;left:20px;top:-70px;background:white;padding:10px;z-index:10}.skip:focus{top:12px}.wrap{max-width:1160px;margin:auto;padding:0 28px}header{background:white;border-bottom:1px solid #e0e6ef}.nav{min-height:88px;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;font-size:18px;font-weight:750;letter-spacing:-.4px}.logo{display:grid;place-items:center;width:43px;height:43px;background:#182b50;border-radius:12px;color:white;font:32px Georgia,serif}.nav-note{font-size:13px;color:#627089}.hero{margin-top:36px;background:#182b50;border-radius:24px;overflow:hidden;position:relative;display:grid;grid-template-columns:1.45fr 1fr;min-height:340px;color:white}.hero-copy{padding:44px 48px;position:relative;z-index:1}.eyebrow{font-size:11px;font-weight:750;letter-spacing:2px;text-transform:uppercase;color:#a7c4fc;display:flex;align-items:center;gap:10px}.eyebrow:before{content:"";width:22px;height:2px;background:#a7c4fc}h1{font-size:clamp(36px,4.4vw,54px);line-height:1.08;letter-spacing:-2px;margin:21px 0 18px;font-weight:750}h1 span{color:#a9c8ff}.hero p{color:#d1ddf1;max-width:420px;font-size:15px;margin:0 0 24px}.hero-link{display:inline-flex;align-items:center;gap:23px;background:white;color:#182b50;padding:11px 18px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:750}.hero-link:hover{background:#e4edff}.art{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;background:radial-gradient(ellipse at 50% 50%,#2b4d80 0,transparent 70%)}.art svg{width:100%;height:100%;max-height:360px}.section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin:42px 0 23px}h2{font-size:25px;letter-spacing:-.7px;line-height:1.3;margin:0 0 6px}.section-head p{font-size:14px;color:#627089;margin:0}.count{border:1px solid #d9e1ed;border-radius:30px;padding:5px 12px;font-size:12px;color:#52627b;white-space:nowrap}.group-label{font-size:10px;text-transform:uppercase;letter-spacing:1.7px;color:#64748b;font-weight:750;margin:24px 0 12px}.grid{display:grid;gap:16px;grid-template-columns:repeat(3,minmax(0,1fr))}.grid.senior{grid-template-columns:repeat(4,minmax(0,1fr))}.card{background:white;border:1px solid #dde4ef;border-radius:15px;overflow:hidden;transition:transform .18s,box-shadow .18s,border-color .18s}.card:hover{transform:translateY(-4px);border-color:#aebfda;box-shadow:0 9px 25px #182b5010}.card-control{display:flex;flex-direction:column;text-align:left;width:100%;height:100%;background:none;border:0;color:inherit;text-decoration:none;padding:23px;cursor:pointer}.card-top{display:flex;width:100%;justify-content:space-between;align-items:center;margin-bottom:22px;gap:8px}.symbol{display:grid;place-items:center;width:42px;height:42px;border-radius:11px;background:var(--tint);color:var(--ink);font:23px Georgia,serif}.level{font-size:10px;letter-spacing:.6px;font-weight:650;color:#68768c;text-transform:uppercase}.course-name{font-size:22px;line-height:1.3;letter-spacing:-.5px;font-weight:750;margin-bottom:8px}.description{font-size:13px;line-height:1.6;color:#627089;min-height:43px;margin-bottom:23px;flex:1}.card-bottom{border-top:1px solid #edf0f6;width:100%;padding-top:15px;display:flex;align-items:center;justify-content:space-between;gap:10px}.status{font-size:11px;font-weight:600;color:#69778b}.arrow{font-size:19px;line-height:1;color:var(--ink)}.encourage{margin:33px 0 43px;border-left:3px solid #799ccf;padding:4px 0 4px 17px;color:#5c6c84;font-size:13px}.encourage strong{color:#243b5e}footer .wrap{border-top:1px solid #dce3ed;padding-top:22px;padding-bottom:26px;display:flex;justify-content:space-between;gap:15px;font-size:11px;color:#6a7890}dialog{border:1px solid #dce3ed;border-radius:20px;padding:30px;max-width:430px;width:calc(100% - 40px);color:#182b50;box-shadow:0 25px 90px #07182d40}dialog::backdrop{background:#0c1c3d80;backdrop-filter:blur(4px)}dialog .tag{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#456b9f;margin-bottom:12px}dialog p{color:#627089;font-size:15px}dialog button{background:#182b50;color:white;border:0;padding:11px 18px;border-radius:8px;cursor:pointer;font-weight:650}html{scroll-behavior:smooth}#courses{scroll-margin-top:25px}noscript{display:block;padding:24px;background:#fff5dd;margin:20px 0}@media(max-width:950px){.grid.senior{grid-template-columns:repeat(2,minmax(0,1fr))}.hero-copy{padding:35px}.hero{grid-template-columns:1.5fr 1fr}.card-control{padding:20px}}@media(max-width:650px){.wrap{padding:0 20px}.nav{min-height:73px}.nav-note{display:none}.hero{margin-top:23px;grid-template-columns:1fr}.hero-copy{padding:31px 27px}.art{display:none}h1{font-size:41px}.section-head{align-items:start;margin-top:30px}.section-head p{max-width:220px}.grid,.grid.senior{grid-template-columns:1fr}.card-top{margin-bottom:14px}.description{min-height:0;margin-bottom:17px}.course-name{font-size:24px}.card-control{padding:22px}.card-top .level{font-size:11px}.section-head h2{font-size:24px}footer .wrap{margin:0 20px;padding-left:0;padding-right:0;flex-direction:column;gap:3px}.encourage{margin-bottom:30px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.card{transition:none}.card:hover{transform:none}}
+
+
+/* Unit layout uses the same design tokens and components as the course home. */
+[hidden]{display:none!important}.unit-shell{padding-bottom:42px}.crumbs{display:flex;flex-wrap:wrap;gap:9px;margin:26px 0 0;font-size:12px;color:#627089}.crumbs a{text-decoration:none}.crumbs a:hover{color:#2456bd;text-decoration:underline}.unit-shell .hero{margin-top:24px;min-height:295px}.unit-shell .hero-copy{padding:37px 42px}.unit-shell h1{font-size:clamp(33px,4.2vw,49px)}.hero-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}.hero-meta span{font-size:11px;border:1px solid #56729b;border-radius:30px;padding:4px 11px;color:#d1ddf1}.unit-intro{display:flex;align-items:center;justify-content:space-between;gap:22px;margin:34px 0 20px}.unit-intro p{font-size:13px;color:#627089;margin:5px 0 0}.unit-intro h2{font-size:24px}.mode-switch{display:flex;gap:5px;background:#e8edf5;padding:5px;border:1px solid #dce3ef;border-radius:12px;flex-shrink:0}button{background:#182b50;color:white;border:1px solid #182b50;border-radius:9px;padding:11px 18px;font-weight:650;font-size:13px;cursor:pointer;transition:background .15s,transform .15s}button:hover{background:#294776}button.secondary{background:white;color:#354e72;border-color:#d7e0ed}button.secondary:hover{background:#edf2fa;border-color:#aabedb}.mode-switch button{padding:10px 16px}.mode-switch button.secondary{background:transparent;border-color:transparent;color:#536781}.mode-switch button.secondary:hover{background:#f6f8fc}button:disabled{cursor:default;opacity:.6}select:focus-visible,input:focus-visible{outline:3px solid #c47b12;outline-offset:3px}#practice-panel{background:white;border:1px solid #dde4ef;border-radius:16px;padding:25px;margin-bottom:22px}.panel-heading{display:flex;align-items:center;gap:11px;margin:0 0 21px}.step-number{display:grid;place-items:center;width:29px;height:29px;border-radius:8px;background:#edf2ff;color:#305daa;font-size:12px;font-weight:750}.panel-heading h3{font-size:15px;font-weight:700;margin:0}.toolbar{display:flex;align-items:end;gap:16px}.unit-controls{display:grid;grid-template-columns:1fr;gap:15px;flex:1;min-width:0}.unit-controls>div{min-width:0}label{display:block;font-weight:650;font-size:11px;color:#526680;margin-bottom:7px}select{width:100%;min-height:45px;border:1px solid #d4deeb;border-radius:8px;padding:10px 28px 10px 11px;background:#f9fbfe;color:#223b61;line-height:1.4;white-space:normal;font-family:inherit;font-size:12px}.actions{flex-shrink:0}#generate-btn{min-height:45px;background:#2456bd;border-color:#2456bd}#generate-btn:hover{background:#19438f}.outcome-box{margin-top:20px;padding:15px 17px;background:#f5f8fc;border-left:3px solid #91aed7;border-radius:0 8px 8px 0;color:#64748b;font-size:12px;line-height:1.75}.outcome-box strong{color:#334e74;font-weight:650}.question{background:white;border:1px solid #dde4ef;border-radius:16px;padding:29px 30px;min-width:0}.question-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding-bottom:19px;border-bottom:1px solid #edf0f6;margin-bottom:25px;font-size:12px;color:#60718b}.question-head>span:first-child{font-weight:650;color:#355477}.question-head>span:last-child{border-radius:25px;padding:4px 11px;background:#e7f4f0;color:#19716c;font-size:10px;white-space:nowrap}.question-head>span:empty{display:none}.question-text{font-size:18px;line-height:1.85;color:#182b50;overflow-wrap:anywhere;white-space:normal}.question-text small{font-size:12px;color:#627089}.question-text svg{overflow:hidden}.choice-list{display:grid;gap:11px;margin:24px 0}.choice-option{display:flex;align-items:flex-start;gap:13px;margin:0;padding:15px 17px;border:1px solid #dce4f0;border-radius:10px;color:#263e60;background:#fcfdff;cursor:pointer;font-size:15px;font-weight:400;transition:background .15s,border-color .15s}.choice-option:hover{border-color:#8ba8d8;background:#f4f7ff}.choice-option:has(input:checked){border-color:#2456bd;background:#edf2ff}.choice-option:focus-within{outline:3px solid #c47b12;outline-offset:2px}.choice-option input{accent-color:#2456bd;margin:7px 0 0;flex-shrink:0}.choice-option>span{min-width:0;overflow-wrap:anywhere}.answer-area{margin-top:26px}.answer-label{font-size:12px;font-weight:650;margin-bottom:9px;color:#526680}math-field,#answer-fallback,.answer-fallback{display:block;width:100%;min-height:60px;border:1px solid #cbd7e8;border-radius:10px;background:#fbfcff;color:#182b50;padding:11px 14px;font-size:21px;--caret-color:#2456bd;--selection-background-color:#dfeaff}math-field:focus-within,#answer-fallback:focus,.answer-fallback:focus{outline:3px solid #c47b12;outline-offset:3px}#answer-fallback{font:16px/1.5 ui-monospace,monospace}.kbd-note{font-size:11px;color:#697991;line-height:1.8;margin-top:10px}.kbd-note code{color:#3e5981;background:#edf2f9;border-radius:4px;padding:2px 4px}.answer-live-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:stretch}.answer-pane{min-width:0}.answer-pane-label{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:#718096;margin:0 0 6px}.answer-preview{display:flex;align-items:center;min-height:60px;height:100%;width:100%;border:1px solid #cbd7e8;border-radius:10px;background:#f5f8fc;color:#182b50;padding:11px 14px;font-size:21px;overflow-x:auto}.answer-preview.empty{font-size:13px;color:#8793a5;font-style:italic}.answer-fallback,#answer-fallback{font:16px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}.question-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:25px;padding-top:21px;border-top:1px solid #edf0f6}.feedback{display:none;margin-top:20px;padding:13px 16px;border-radius:8px;font-size:14px;font-weight:600}.feedback.good{display:block;background:#e7f4f0;color:#166258;border-left:3px solid #238379}.feedback.bad{display:block;background:#fff1ed;color:#973d2c;border-left:3px solid #bb604a}.hint-box,.solution-box{display:none;margin-top:19px;padding:19px 21px;border-radius:10px;font-size:14px;line-height:1.85;overflow-wrap:anywhere}.hint-box{background:#fcf4e7;color:#795722;border-left:3px solid #d3ae68}.solution-box{background:#eef7f4;border-left:3px solid #62a799;color:#234e48}.steps{margin-top:10px;line-height:1.9}.practice-question-list{display:grid;gap:18px;margin-bottom:22px}.practice-question-list[hidden]{display:none!important}.practice-question-list .question{margin:0}.practice-set-note{font-size:12px;color:#627089;margin:-7px 0 20px}.quiz-status{display:none;justify-content:space-between;gap:12px;margin-bottom:22px;padding:16px 21px;background:#eaf0fb;border:1px solid #d4dff2;border-radius:12px;font-size:13px;font-weight:650;color:#355989}.quiz-status.active{display:flex}.notice{background:#fff4df;border-left:3px solid #c69436;border-radius:8px;padding:14px 18px;font-size:13px;color:#775720}mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden;padding:3px 0}.unit-shell>.encourage{margin:25px 0 0}footer .wrap{padding-left:28px;padding-right:28px}.math{font-family:Cambria,serif}
+@media(max-width:1000px){.toolbar{align-items:stretch;flex-direction:column}.actions{display:flex;justify-content:flex-end}.unit-intro{align-items:flex-start}.unit-controls{grid-template-columns:1.35fr .65fr}.unit-shell .hero-copy{padding:32px}.unit-shell h1{font-size:39px}}
+@media(max-width:700px){.unit-intro{flex-direction:column;gap:17px}.mode-switch{width:100%}.mode-switch button{flex:1}.unit-controls{grid-template-columns:1fr}.actions button{width:100%}.unit-shell .hero{grid-template-columns:1fr}.unit-shell .art{display:none}.unit-shell .hero-copy{padding:29px 25px}.unit-shell h1{font-size:36px;letter-spacing:-1.2px}.question{padding:21px}.question-head{align-items:flex-start;font-size:11px}.question-text{font-size:17px}#practice-panel{padding:21px}.question-actions button{flex:1 1 40%}.hero-meta{gap:6px}.crumbs{font-size:11px;gap:6px}.choice-option{padding:13px}.quiz-status{flex-wrap:wrap}.solution-box,.hint-box{padding:15px}.unit-shell{padding-bottom:30px}.answer-live-grid{grid-template-columns:1fr}}
+@media print{header,footer,.crumbs,.hero,.unit-intro,#practice-panel,.question-actions,.answer-area,.quiz-status,.encourage,.notice{display:none!important}body{background:white}.question{border:0;padding:0}.solution-box{break-inside:avoid}}
+</style>
+
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [['\\(', '\\)']],
+          displayMath: [['\\[', '\\]']],
+          processEscapes: true
+        },
+        svg: { fontCache: 'global' }
+      };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-svg.js" onerror="window.mathLoadFailed=true"></script>
+    <script defer src="unit-4.js"></script>
+  </head>
+
+  <body data-page="unit">
+    <a class="skip" href="#practice-panel">Skip to practice</a>
+    <header><div class="wrap nav"><a class="brand" href="index.html" aria-label="Math Practice home"><span class="logo" aria-hidden="true">π</span>Math Practice</a><span class="nav-note">Math 30-1 · Unit 04</span></div></header>
+
+    <main id="main" class="wrap unit-shell">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="index.html">Courses</a>
+        <span>/</span>
+        <a href="math-30-1.html">Math 30-1</a>
+        <span>/ Permutations, Combinations &amp; Binomial Theorem</span>
+      </nav>
+
+      <section class="hero" aria-labelledby="unit-title"><div class="hero-copy"><div class="eyebrow">Math 30-1 · Unit 04</div><h1 id="unit-title">Permutations &amp;<br><span>combinations.</span></h1><p>Count. Arrange. Select. Expand.<br>One hard problem at a time.</p><div class="hero-meta"><span>4 core strands + enrichment</span><span>Hints &amp; worked solutions</span></div></div><div class="art" aria-hidden="true"><svg viewBox="0 0 430 360" fill="none"><defs><pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0H0V30" stroke="#abc7ee" stroke-opacity=".10"/></pattern><linearGradient id="accent" x1="65" y1="285" x2="360" y2="75" gradientUnits="userSpaceOnUse"><stop stop-color="#699ef7"/><stop offset="1" stop-color="#bde9e0"/></linearGradient></defs><rect x="30" y="30" width="370" height="300" rx="20" fill="url(#grid)"/><g font-family="Georgia,serif" text-anchor="middle" fill="#d7e8ff"><text x="215" y="79" font-size="22">1</text><text x="195" y="111" font-size="22">1</text><text x="235" y="111" font-size="22">1</text><text x="175" y="143" font-size="22">1</text><text x="215" y="143" font-size="22">2</text><text x="255" y="143" font-size="22">1</text><text x="155" y="175" font-size="22">1</text><text x="195" y="175" font-size="22">3</text><text x="235" y="175" font-size="22">3</text><text x="275" y="175" font-size="22">1</text><text x="135" y="207" font-size="22">1</text><text x="175" y="207" font-size="22">4</text><text x="215" y="207" font-size="22">6</text><text x="255" y="207" font-size="22">4</text><text x="295" y="207" font-size="22">1</text></g><path d="M122 220H308" stroke="url(#accent)" stroke-width="3" stroke-linecap="round"/><g transform="translate(54 247) rotate(-5)"><rect width="132" height="50" rx="12" fill="#294776" stroke="#4b6995"/><text x="66" y="32" text-anchor="middle" font-family="Georgia,serif" font-size="23" fill="#d7e8ff">n! / (n−r)!</text></g><g transform="translate(244 247) rotate(5)"><rect width="129" height="50" rx="12" fill="#294776" stroke="#4b6995"/><text x="64" y="32" text-anchor="middle" font-family="Georgia,serif" font-size="23" fill="#d7e8ff">ⁿCᵣ</text></g><circle cx="104" cy="105" r="6" fill="#abdaca"/><circle cx="326" cy="142" r="6" fill="#a2c5ff"/></svg></div></section>
+      <div class="unit-intro"><div><h2>Make it your practice.</h2><p>Choose a strand and get one question from every question type inside it.</p></div>
+      <div class="mode-switch" role="group" aria-label="Practice mode"><button id="practice-mode" type="button">Strand practice</button><button id="quiz-mode" type="button" class="secondary">10-question quiz</button></div></div>
+
+      <p id="math-status" class="notice" hidden>
+        Math rendering could not load. Reload the page with an internet connection so the equations display correctly.
+      </p>
+
+
+
+      <section id="practice-panel" aria-labelledby="practice-heading">
+        <div class="panel-heading"><span class="step-number" aria-hidden="true">01</span><h3 id="practice-heading">Choose your focus</h3></div>
+        <div class="toolbar">
+          <div class="unit-controls">
+            <div>
+              <label for="outcome-select">Curriculum strand</label>
+              <select id="outcome-select"></select>
+            </div>
+          </div>
+          <div class="actions">
+            <button id="generate-btn" type="button">Generate new set</button>
+          </div>
+        </div>
+
+        <div id="outcome-summary" class="outcome-box" aria-live="polite"></div>
+      </section>
+
+      <section id="practice-set" class="practice-question-list" aria-live="polite"></section>
+
+      <section id="quiz-status" class="quiz-status" aria-live="polite">
+        <span id="quiz-progress">Question 1 of 10</span>
+        <span id="quiz-score">Score: 0</span>
+      </section>
+
+      <article id="question-card" class="question" aria-live="polite" hidden>
+        <div class="question-head">
+          <span id="question-outcome">PC</span>
+          <span id="question-difficulty">Hard</span>
+        </div>
+
+        <div id="question-text" class="question-text"></div>
+
+        <div id="choice-list" class="choice-list" hidden></div>
+
+        <div id="answer-area" class="answer-area">
+          <div class="answer-label">Your answer</div>
+          <div class="answer-live-grid">
+            <div class="answer-pane">
+              <div class="answer-pane-label">Type LaTeX</div>
+              <input id="answer-fallback" type="text" aria-label="Type your answer in LaTeX" placeholder="Type your answer, e.g. 360360">
+            </div>
+            <div class="answer-pane">
+              <div class="answer-pane-label">Live preview</div>
+              <div id="answer-preview" class="answer-preview empty" aria-live="polite">Your typeset answer will appear here.</div>
+            </div>
+          </div>
+          <div class="kbd-note">Type with your regular keyboard. The preview updates automatically. You can type integers, factorial-style calculations, fractions, or LaTeX such as <code>\frac{12!}{8!}</code>. Separate multiple answers with semicolons when requested.</div>
+        </div>
+
+        <div class="question-actions">
+          <button id="submit-btn" type="button">Check answer</button>
+          <button id="hint-btn" type="button" class="secondary">Hint</button>
+          <button id="solution-btn" type="button" class="secondary">Show solution</button>
+          <button id="next-btn" type="button" class="secondary" hidden>Next question</button>
+        </div>
+
+        <div id="feedback" class="feedback" role="status"></div>
+        <div id="hint-box" class="hint-box"></div>
+        <div id="solution-box" class="solution-box"></div>
+      </article>
+      <p class="encourage"><strong>Progress takes practice.</strong> Take your time. Use a hint. Try another approach.</p>
+    </main>
+
+    <footer><div class="wrap"><span>Math Practice · School mathematics</span><span>Stay curious. Keep going.</span></div></footer>
+  </body>
+</html>

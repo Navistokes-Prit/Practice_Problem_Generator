@@ -1096,7 +1096,7 @@
     const correct=`y=${A}\\${kind}[${b}(x-${piLatex(hN,hD)})]${signed(k)}`;
     const wrong=[`y=${A}\\${kind}[\\frac{1}{${b}}(x-${piLatex(hN,hD)})]${signed(k)}`,`y=${A}\\${kind}[${b}(x+${piLatex(hN,hD)})]${signed(k)}`,`y=${a}\\${kind}[${b}(x-${piLatex(hN,hD)})]${signed(-k)}`];
     const description=`${reflect?'reflect in the x-axis, ':''}vertical stretch factor ${a}, horizontal compression factor ${b}, shift right ${math(piLatex(hN,hD))}, and shift ${Math.abs(k)} unit${Math.abs(k)===1?'':'s'} ${k>0?'up':'down'}`;
-    return mc('TR4','Write an equation from transformations',`Starting from ${math(`y=\\${kind}x`)}, apply a ${description}. Which equation results?`,correct,wrong,'Translate the transformation language directly into y=a f[b(x-c)]+d.',`The outside factor is ${A}, the inside factor is ${b}, the phase shift is ${math(piLatex(hN,hD))} right, and the vertical displacement is ${k}.`);
+    return mc('TR4','Write an equation from transformations',`Starting from ${math(`y=\\${kind} x`)}, apply a ${description}. Which equation results?`,correct,wrong,'Translate the transformation language directly into y=a f[b(x-c)]+d.',`The outside factor is ${A}, the inside factor is ${b}, the phase shift is ${math(piLatex(hN,hD))} right, and the vertical displacement is ${k}.`);
   }
 
   function gGraphToEquation(d) {
@@ -1155,18 +1155,18 @@
     const pool=fn==='tan'?SPECIAL_ANGLES.filter(a=>a.tan && ['1','-1','\\sqrt{3}','-\\sqrt{3}','\\frac{\\sqrt{3}}{3}','-\\frac{\\sqrt{3}}{3}'].includes(a.tan)):SPECIAL_ANGLES.filter(a=>a[fn] && a[fn]!=='0' && a[fn]!==null);
     const seed=pick(pool),target=seed[fn];
     const sols=intervalSolutionsForTrig(fn,target,0,TWO_PI,false);
-    return setQ('TR5','Solve a basic trigonometric equation',`Solve ${math(`${trigEquationLabel(fn)}x=${target}`)} for ${math('0\\le x<2\\pi')}.`,sols,'Find the reference angle, then use the sign to identify every quadrant that works.',`The complete solution set is ${math(`\\{${sols.map(closestSpecialLatex).join(',')}\\}`)}.`);
+    return setQ('TR5','Solve a basic trigonometric equation',`Solve ${math(`${trigEquationLabel(fn)} x=${target}`)} for ${math('0\\le x<2\\pi')}.`,sols,'Find the reference angle, then use the sign to identify every quadrant that works.',`The complete solution set is ${math(`\\{${sols.map(closestSpecialLatex).join(',')}\\}`)}.`);
   }
 
   function gQuadraticPrimary(d) {
     const fn=pick(['sin','cos']);
     const form=pick(['half-one','zero-half','half-neghalf']);
     let equation,targets=[];
-    if(form==='half-one'){equation=`2${trigEquationLabel(fn)}^2x-3${trigEquationLabel(fn)}x+1=0`;targets=['\\frac{1}{2}','1'];}
-    if(form==='zero-half'){equation=`2${trigEquationLabel(fn)}^2x-${trigEquationLabel(fn)}x=0`;targets=['0','\\frac{1}{2}'];}
+    if(form==='half-one'){equation=`2${trigEquationLabel(fn)}^2x-3${trigEquationLabel(fn)} x+1=0`;targets=['\\frac{1}{2}','1'];}
+    if(form==='zero-half'){equation=`2${trigEquationLabel(fn)}^2x-${trigEquationLabel(fn)} x=0`;targets=['0','\\frac{1}{2}'];}
     if(form==='half-neghalf'){equation=`4${trigEquationLabel(fn)}^2x-1=0`;targets=['\\frac{1}{2}','-\\frac{1}{2}'];}
     const sols=[...new Set(targets.flatMap(t=>intervalSolutionsForTrig(fn,t,0,TWO_PI,false)).map(v=>roundTo(v,12)))].sort((a,b)=>a-b);
-    return setQ('TR5','Quadratic trigonometric equation',`Solve ${math(equation)} for ${math('0\\le x<2\\pi')}.`,sols,`Let ${math(`u=${trigEquationLabel(fn)}x`)} and factor the quadratic first.`,`The quadratic gives ${math(targets.map(t=>`${trigEquationLabel(fn)}x=${t}`).join('\\quad\\text{or}\\quad '))}. Using the unit circle gives ${math(sols.map(closestSpecialLatex).join(',\\ '))}.`);
+    return setQ('TR5','Quadratic trigonometric equation',`Solve ${math(equation)} for ${math('0\\le x<2\\pi')}.`,sols,`Let ${math(`u=${trigEquationLabel(fn)} x`)} and factor the quadratic first.`,`The quadratic gives ${math(targets.map(t=>`${trigEquationLabel(fn)} x=${t}`).join('\\quad\\text{or}\\quad '))}. Using the unit circle gives ${math(sols.map(closestSpecialLatex).join(',\\ '))}.`);
   }
 
   function gReciprocalQuadratic(d) {
@@ -1175,10 +1175,10 @@
     const A=2, B=-2*(valid+invalid), C=2*valid*invalid;
     const Bstr=B===0?'':B>0?`+${B}`:`${B}`;
     const Cstr=C>0?`+${C}`:`${C}`;
-    const equation=`${A}\\${fn}^2x${Bstr}\\${fn}x${Cstr}=0`;
+    const equation=`${A}\\${fn}^2x${Bstr}\\${fn} x${Cstr}=0`;
     const baseFn=fn==='sec'?'cos':'sin',target=closestExactNumber(1/valid);
     const sols=intervalSolutionsForTrig(baseFn,target,0,TWO_PI,false);
-    return setQ('TR5','Quadratic equation in secant or cosecant',`Solve exactly: ${math(equation)}, ${math('0\\le x<2\\pi')}.`,sols,`Let ${math(`u=\\${fn}x`)}. Factor the quadratic, then reject any reciprocal value that is impossible.`,`The roots are ${math(`\\${fn}x=${valid}`)} and ${math(`\\${fn}x=${invalid}`)}. The value ${invalid} is impossible because ${math(`|\\${fn}x|\\ge1`)}. Thus ${math(`\\${baseFn}x=${target}`)}, giving ${math(sols.map(closestSpecialLatex).join(',\\ '))}.`);
+    return setQ('TR5','Quadratic equation in secant or cosecant',`Solve exactly: ${math(equation)}, ${math('0\\le x<2\\pi')}.`,sols,`Let ${math(`u=\\${fn} x`)}. Factor the quadratic, then reject any reciprocal value that is impossible.`,`The roots are ${math(`\\${fn} x=${valid}`)} and ${math(`\\${fn} x=${invalid}`)}. The value ${invalid} is impossible because ${math(`|\\${fn} x|\\ge1`)}. Thus ${math(`\\${baseFn} x=${target}`)}, giving ${math(sols.map(closestSpecialLatex).join(',\\ '))}.`);
   }
 
   function gGeneralTangent(d) {
@@ -1205,14 +1205,14 @@
     const wrong=baseFn==='cos'
       ? [correct.replace(/2n\\pi/g,'n\\pi'),correct.replace(/\\pm/g,'+'),`x=${closestSpecialLatex(sign>0?Math.PI/3:2*Math.PI/3)}+2n\\pi,\\quad n\\in\\mathbb Z`]
       : [correct.replace(/2n\\pi/g,'n\\pi'),`x=${closestSpecialLatex(sign>0?Math.PI/6:7*Math.PI/6)}+2n\\pi,\\quad n\\in\\mathbb Z`,`x=${sign>0?'\\frac{1}{2}':'-\\frac{1}{2}'}+2n\\pi`];
-    return mc('TR5','General solution of a reciprocal equation',`Give the general solution of ${math(`\\${fn}x=${target}`)}.`,correct,wrong,`Rewrite as ${math(`\\${baseFn}x=${primary}`)} and use the unit circle.`,`The reciprocal equation becomes ${math(`\\${baseFn}x=${primary}`)}. Accounting for every coterminal solution gives ${math(correct)}.`);
+    return mc('TR5','General solution of a reciprocal equation',`Give the general solution of ${math(`\\${fn} x=${target}`)}.`,correct,wrong,`Rewrite as ${math(`\\${baseFn} x=${primary}`)} and use the unit circle.`,`The reciprocal equation becomes ${math(`\\${baseFn} x=${primary}`)}. Accounting for every coterminal solution gives ${math(correct)}.`);
   }
 
   function gSolutionCount(d) {
     const fn=pick(['sin','cos']),target=pick(['\\frac{1}{2}','-\\frac{1}{2}','\\frac{\\sqrt{2}}{2}','-\\frac{\\sqrt{2}}{2}']);
     const min=-2*Math.PI,max=4*Math.PI;
     const sols=intervalSolutionsForTrig(fn,target,min,max,true);
-    return numericQuestion('TR5','Count solutions on an extended interval',d,`Without graphing first, determine how many solutions ${math(`${trigEquationLabel(fn)}x=${target}`)} has on ${math('[-2\\pi,4\\pi]')}.`,sols.length,1e-8,'Count how many full 2π cycles occur in the interval and how many solutions occur per cycle, checking endpoints.',`The interval spans three full revolutions. This equation has two solutions per revolution, and the endpoint check gives ${sols.length} solutions in total.`);
+    return numericQuestion('TR5','Count solutions on an extended interval',d,`Without graphing first, determine how many solutions ${math(`${trigEquationLabel(fn)} x=${target}`)} has on ${math('[-2\\pi,4\\pi]')}.`,sols.length,1e-8,'Count how many full 2π cycles occur in the interval and how many solutions occur per cycle, checking endpoints.',`The interval spans three full revolutions. This equation has two solutions per revolution, and the endpoint check gives ${sols.length} solutions in total.`);
   }
 
   function gSinEqualsCos(d) {
@@ -1255,7 +1255,7 @@
     const fn=pick(['sin','cos']);
     const targets=['0','\\frac{\\sqrt{3}}{2}','-\\frac{\\sqrt{3}}{2}'];
     const sols=[...new Set(targets.flatMap(t=>intervalSolutionsForTrig(fn,t,0,TWO_PI,false)).map(v=>roundTo(v,12)))].sort((a,b)=>a-b);
-    return setQ('EXT','Cubic trigonometric factoring',`Solve ${math(`4${trigEquationLabel(fn)}^3x-3${trigEquationLabel(fn)}x=0`)} for ${math('0\\le x<2\\pi')}.`,sols,`Factor out ${math(`${trigEquationLabel(fn)}x`)} and then factor the difference of squares.`,`Factoring gives ${math(`${trigEquationLabel(fn)}x(4${trigEquationLabel(fn)}^2x-3)=0`)}. Hence ${math(`${trigEquationLabel(fn)}x=0`)} or ${math(`${trigEquationLabel(fn)}x=\\pm\\sqrt{3}/2`)}, producing ${math(sols.map(closestSpecialLatex).join(',\\ '))}.`);
+    return setQ('EXT','Cubic trigonometric factoring',`Solve ${math(`4${trigEquationLabel(fn)}^3x-3${trigEquationLabel(fn)} x=0`)} for ${math('0\\le x<2\\pi')}.`,sols,`Factor out ${math(`${trigEquationLabel(fn)} x`)} and then factor the difference of squares.`,`Factoring gives ${math(`${trigEquationLabel(fn)} x(4${trigEquationLabel(fn)}^2x-3)=0`)}. Hence ${math(`${trigEquationLabel(fn)} x=0`)} or ${math(`${trigEquationLabel(fn)} x=\\pm\\sqrt{3}/2`)}, producing ${math(sols.map(closestSpecialLatex).join(',\\ '))}.`);
   }
 
   function eMixedGraphCount(d) {
@@ -1267,8 +1267,28 @@
 
   // ------------------------- helpers -------------------------
 
+  function normalizeGeneratedLatex(value) {
+    let latex = String(value ?? '');
+
+    // Defensive repair for generated TeX. In ordinary JavaScript strings a single
+    // backslash can be consumed before MathJax receives it, leaving visible text
+    // such as "frac", "sqrt", "pi", or "sin". Generated questions should
+    // always use TeX commands, so restore a missing backslash when necessary.
+    const commands = [
+      'cdot','times','frac','dfrac','tfrac','sqrt','pi','theta','alpha','beta','gamma',
+      'sin','cos','tan','sec','csc','cot','left','right','pm','le','ge','neq','infty',
+      'mathbb','cup','cap','circ'
+    ];
+
+    for (const command of commands) {
+      const pattern = new RegExp(`(^|[^\\\\A-Za-z])(${command})(?=\\b|\\{|\\()`, 'g');
+      latex = latex.replace(pattern, `$1\\$2`);
+    }
+    return latex;
+  }
+
   function math(latex) {
-    return `\\(${escapeHtml(String(latex))}\\)`;
+    return `\\(${escapeHtml(normalizeGeneratedLatex(latex))}\\)`;
   }
 
   function escapeHtml(value) {
